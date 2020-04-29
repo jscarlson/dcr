@@ -30,7 +30,6 @@ dyad_robust <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
     dyad.mem.i <- unique.dyad.mem[i] # set member i
     print(paste0("Loop status: ", as.character(round(100*(i/N_dyad),2)), "%")) # completion status
     dyad.with.i <- apply(dyad.by.obs, 1, function(x) as.numeric(dyad.mem.i %in% x)) # identify all dyads with member i
-    # print(sum(dyad.with.i == 1))
     dyad.category <- dyad.with.i*gp.tag + (1-dyad.with.i)*1:nrow(dyad.by.obs) # give unique group tag to dyads containing i
     if (i==1) {
       cov.mat.sum <- vcovCL(model, dyad.category, type = "HC0", multi0 = TRUE)
@@ -38,15 +37,12 @@ dyad_robust <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
       cov.mat.sum <- cov.mat.sum + vcovCL(model, dyad.category, type = "HC0", multi0 = TRUE)
     }
   }
-  print(cov.mat.sum)
 
   # substract repeated variance estimator for repeated dyads
   cov.mat.sum.intermed <- cov.mat.sum - vcovCL(model, data[, dyad_id], type = "HC0", multi0 = TRUE)
-  print(cov.mat.sum.intermed)
 
   # substract HC variance estimator
   V.hat <- cov.mat.sum.intermed - (N_dyad-2)*vcovHC(model, type="HC0")
-  print(V.hat)
 
   # return standard errors
   coef.var <- diag(V.hat)
@@ -114,17 +110,14 @@ dyad_robust_any <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, dat
   unique.dyad.mem <- na.omit(unique(c(data[[dyad_mem1]], data[[dyad_mem2]]))) # unique members
   unique.dyad.mem <- unique.dyad.mem[order(unique.dyad.mem)] # order members
   N_dyad <- length(unique.dyad.mem)
-  print(N_dyad)
   dyad.by.obs <- data[,c(dyad_mem1, dyad_mem2)] # create dyad matrix
 
   # substract repeated variance estimator for repeated dyads
   rc <- robust.se.nodfc(model, data[, dyad_id])
-  print(sqrt(diag(rc)))
   cov.mat.sum.intermed <- -1*rc
 
   # substract HC variance estimator
   hc <- hc0.robust(model)
-  print(sqrt(diag(hc)))
   cov.mat.sum <- cov.mat.sum.intermed - (N_dyad-2)*hc
 
   # sum variance estimators for clustering on all dyads containing member i
@@ -133,7 +126,6 @@ dyad_robust_any <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, dat
     print(paste0("Loop status: ", as.character(round(100*(i/N_dyad),2)), "%")) # completion status
     dyad.with.i <- apply(dyad.by.obs, 1, function(x) as.numeric(dyad.mem.i %in% x)) # identify all dyads with member i
     dyad.category <- dyad.with.i*gp.tag + (1-dyad.with.i)*1:nrow(dyad.by.obs) # give unique group tag to dyads containing i
-    print(sqrt(diag(robust.se.nodfc(model, dyad.category)))[1:5])
     cov.mat.sum <- cov.mat.sum + robust.se.nodfc(model, dyad.category)
   }
 
