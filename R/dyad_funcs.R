@@ -43,17 +43,17 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
     dyad.with.i <- apply(dyad.by.obs, 1, function(x) as.numeric(dyad.mem.i %in% x)) # identify all dyads with member i
     dyad.category <- dyad.with.i*gp.tag + (1-dyad.with.i)*1:nrow(dyad.by.obs) # give unique group tag to dyads containing i
     if (i==1) {
-      cov.mat.sum <- vcovCL(model, dyad.category, type = "HC0", multi0 = TRUE)
+      cov.mat.sum <- sandwich::vcovCL(model, dyad.category, type = "HC0", multi0 = TRUE)
     } else if (i!=1) {
-      cov.mat.sum <- cov.mat.sum + vcovCL(model, dyad.category, type = "HC0", multi0 = TRUE)
+      cov.mat.sum <- cov.mat.sum + sandwich::vcovCL(model, dyad.category, type = "HC0", multi0 = TRUE)
     }
   }
 
   # substract repeated variance estimator for repeated dyads
-  cov.mat.sum.intermed <- cov.mat.sum - vcovCL(model, data[, dyad_id], type = "HC0", multi0 = TRUE)
+  cov.mat.sum.intermed <- cov.mat.sum - sandwich::vcovCL(model, data[, dyad_id], type = "HC0", multi0 = TRUE)
 
   # substract HC variance estimator
-  V.hat <- cov.mat.sum.intermed - (N_dyad-2)*vcovHC(model, type="HC0")
+  V.hat <- cov.mat.sum.intermed - (N_dyad-2)*sandwich::vcovHC(model, type="HC0")
 
   # return standard errors
   coef.var <- diag(V.hat)
@@ -81,7 +81,7 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
 #' @param data Data frame object containing dyadic data with dyad identifier variables
 #' @return A list containing DCR standard errors variances for model parameters
 #' @export
-dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(detectCores()/2), data) {
+dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(parallel::detectCores()/2), data) {
 
   # set up starting params
   data[[dyad_mem1]] <- as.character(data[[dyad_mem1]]) # convert to character
@@ -92,7 +92,7 @@ dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(d
   unique.dyad.mem <- unique.dyad.mem[order(unique.dyad.mem)] # order members
   N_dyad <- length(unique.dyad.mem)
   dyad.by.obs <- data[,c(dyad_mem1, dyad_mem2)] # create dyad matrix
-  N_cores <- detectCores() # number of cores available for computation
+  N_cores <- parallel::detectCores() # number of cores available for computation
   id_iter <- 1:N_dyad # list of indices for all dyads
 
   # sum variance estimators for clustering on all dyads containing member i
@@ -104,17 +104,17 @@ dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(d
     if (length(unique(dyad.category)) == 1) { # two few cluster protection
       stop("Stop! Only one cluster!")
     } else {
-      cov.mat <- vcovCL(model, dyad.category, type = "HC0", multi0 = TRUE)
+      cov.mat <- sandwich::vcovCL(model, dyad.category, type = "HC0", multi0 = TRUE)
     }
   }
-  cov.mat.sum.mc <- mclapply(id_iter, dyad_cont_mem_clust, mc.cores = ncore, s = cov.mat.sum, unique.dyads = unique.dyad.mem, dyad.pairs = dyad.by.obs)
+  cov.mat.sum.mc <- parallel::mclapply(id_iter, dyad_cont_mem_clust, mc.cores = ncore, s = cov.mat.sum, unique.dyads = unique.dyad.mem, dyad.pairs = dyad.by.obs)
   cov.mat.sum <- Reduce("+", cov.mat.sum.mc)
 
   # substract repeated variance estimator for repeated dyads
-  cov.mat.sum.intermed <- cov.mat.sum - vcovCL(model, data[, dyad_id], type = "HC0", multi0 = TRUE)
+  cov.mat.sum.intermed <- cov.mat.sum - sandwich::vcovCL(model, data[, dyad_id], type = "HC0", multi0 = TRUE)
 
   # substract HC variance estimator
-  V.hat <- cov.mat.sum.intermed - (N_dyad-2)*vcovHC(model, type="HC0")
+  V.hat <- cov.mat.sum.intermed - (N_dyad-2)*sandwich::vcovHC(model, type="HC0")
 
   # return standard errors
   coef.var <- diag(V.hat)

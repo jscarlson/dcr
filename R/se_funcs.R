@@ -16,9 +16,8 @@ robust.se.nodfc <- function(model, cluster){
   M <- length(unique(cluster))
   N <- length(cluster)
   dfc <- 1
-  uj <- apply(estfun(model), 2, function(x) tapply(x, cluster, sum))
-  rcse.cov <- dfc * sandwich(model, meat = crossprod(uj)/N)
-  rcse.se <- coeftest(model, rcse.cov)
+  uj <- apply(sandwich::estfun(model), 2, function(x) tapply(x, cluster, sum))
+  rcse.cov <- dfc * sandwich::sandwich(model, meat = crossprod(uj)/N)
   return(rcse.cov)
 }
 
@@ -27,22 +26,21 @@ robust.se.nodfc.ef <- function(model, ef, cluster) {
   N <- length(cluster)
   dfc <- 1
   uj <- apply(ef, 2, function(x) tapply(x, cluster, sum))
-  rcse.cov <- dfc * sandwich(model, meat = crossprod(uj)/N)
-  rcse.se <- coeftest(model, rcse.cov)
+  rcse.cov <- dfc * sandwich::sandwich(model, meat = crossprod(uj)/N)
   return(rcse.cov)
 }
 
 hc0.robust <- function(model){
   dfc <- 1
-  uj <- estfun(model)
-  cov.mat <- dfc * sandwich(model, meat = Matrix::crossprod(uj)/nrow(uj))
+  uj <- sandwich::estfun(model)
+  cov.mat <- dfc * sandwich::sandwich(model, meat = crossprod(uj)/nrow(uj))
   return(cov.mat)
 }
 
 hc0.robust.ef <- function(model, ef){
   dfc <- 1
   uj <- ef
-  cov.mat <- dfc * sandwich(model, meat = Matrix::crossprod(uj)/nrow(uj))
+  cov.mat <- dfc * sandwich::sandwich(model, meat = Matrix::crossprod(uj)/nrow(uj))
   return(cov.mat)
 }
 
