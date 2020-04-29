@@ -135,6 +135,7 @@ dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(d
 #' @param dyad_id String for variable name for dyad identifier
 #' @param dyad_mem1 String for variable name for first dyad member
 #' @param dyad_mem2 String for variable name for second dyad member
+#' @param spec_vars String vector of variable names in model specification
 #' @param data Data frame object containing dyadic data with dyad identifier variables
 #' @param ef Optional matrix containing empirical estimating functions
 #' @return A list containing DCR standard errors variances for model parameters
