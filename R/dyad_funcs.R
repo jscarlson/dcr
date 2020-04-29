@@ -22,7 +22,7 @@
 #' @param dyad_mem1 String for variable name for first dyad member
 #' @param dyad_mem2 String for variable name for second dyad member
 #' @param data Data frame object containing dyadic data with dyad identifier variables
-#' @return A list containing DCR standard errors variances for model parameters
+#' @return A list containing DCR standard errors and variances for model parameters
 #' @export
 dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
 
@@ -79,7 +79,7 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
 #' @param dyad_mem2 String for variable name for second dyad member
 #' @param ncore Integer specifying the number of cores to be used for parallel computation
 #' @param data Data frame object containing dyadic data with dyad identifier variables
-#' @return A list containing DCR standard errors variances for model parameters
+#' @return A list containing DCR standard errors and variances for model parameters
 #' @export
 dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(parallel::detectCores()/2), data) {
 
@@ -138,7 +138,7 @@ dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(p
 #' @param spec_vars String vector of variable names in model specification
 #' @param data Data frame object containing dyadic data with dyad identifier variables
 #' @param ef Optional matrix containing empirical estimating functions
-#' @return A list containing DCR standard errors variances for model parameters
+#' @return A list containing DCR standard errors and variances for model parameters
 #' @export
 dcr_custom <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef = NULL) {
 
