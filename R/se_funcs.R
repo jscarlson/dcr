@@ -12,7 +12,6 @@
 ### Robust variance estimation function(s) ###
 ##############################################
 
-#' @export
 robust.se.nodfc <- function(model, cluster){
   M <- length(unique(cluster))
   N <- length(cluster)
@@ -23,10 +22,26 @@ robust.se.nodfc <- function(model, cluster){
   return(rcse.cov)
 }
 
-#' @export
+robust.se.nodfc.ef <- function(model, ef, cluster) {
+  M <- length(unique(cluster))
+  N <- length(cluster)
+  dfc <- 1
+  uj <- apply(ef, 2, function(x) tapply(x, cluster, sum))
+  rcse.cov <- dfc * sandwich(model, meat = crossprod(uj)/N)
+  rcse.se <- coeftest(model, rcse.cov)
+  return(rcse.cov)
+}
+
 hc0.robust <- function(model){
   dfc <- 1
   uj <- estfun(model)
+  cov.mat <- dfc * sandwich(model, meat = Matrix::crossprod(uj)/nrow(uj))
+  return(cov.mat)
+}
+
+hc0.robust.ef <- function(model, ef){
+  dfc <- 1
+  uj <- ef
   cov.mat <- dfc * sandwich(model, meat = Matrix::crossprod(uj)/nrow(uj))
   return(cov.mat)
 }

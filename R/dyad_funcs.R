@@ -12,8 +12,19 @@
 ### Compute cluster–robust standard errors for dyadic data ###
 ##############################################################
 
+#' Compute dyadic-clustering robust (DCR) variance estimates
+#'
+#' This function computes DCR standard error and variance estimates for
+#' model parameters.
+#'
+#' @param model Model object (must be compatible with Sandwich package functions)
+#' @param dyad_id String for variable name for dyad identifier
+#' @param dyad_mem1 String for variable name for first dyad member
+#' @param dyad_mem2 String for variable name for second dyad member
+#' @param data Data frame object containing dyadic data with dyad identifier variables
+#' @return A list containing DCR standard errors variances for model parameters
 #' @export
-dyad_robust <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
+dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
 
   # set up starting params
   data[[dyad_mem1]] <- as.character(data[[dyad_mem1]]) # convert to character
@@ -48,13 +59,29 @@ dyad_robust <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
   coef.var <- diag(V.hat)
   coef.se <- sqrt(coef.var)
   outputlst <- list(coef.se, coef.var)
-  return(outputlst[[1]])
+  return(outputlst)
 
 }
 
 # parallel version
+
+#' Compute dyadic-clustering robust (DCR) variance estimates (parallelized)
+#'
+#' This function enables the parallel computation of DCR standard error
+#' and variance estimates.
+#'
+#' The default number of cores is set to the ceiling of half the total number of cores
+#' available.
+#'
+#' @param model Model object (must be compatible with Sandwich package functions)
+#' @param dyad_id String for variable name for dyad identifier
+#' @param dyad_mem1 String for variable name for first dyad member
+#' @param dyad_mem2 String for variable name for second dyad member
+#' @param ncore Integer specifying the number of cores to be used for parallel computation
+#' @param data Data frame object containing dyadic data with dyad identifier variables
+#' @return A list containing DCR standard errors variances for model parameters
 #' @export
-dyad_robust_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
+dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(detectCores()/2), data) {
 
   # set up starting params
   data[[dyad_mem1]] <- as.character(data[[dyad_mem1]]) # convert to character
@@ -80,7 +107,7 @@ dyad_robust_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
       cov.mat <- vcovCL(model, dyad.category, type = "HC0", multi0 = TRUE)
     }
   }
-  cov.mat.sum.mc <- mclapply(id_iter, dyad_cont_mem_clust, mc.cores = ceiling(N_cores/2), s = cov.mat.sum, unique.dyads = unique.dyad.mem, dyad.pairs = dyad.by.obs)
+  cov.mat.sum.mc <- mclapply(id_iter, dyad_cont_mem_clust, mc.cores = ncore, s = cov.mat.sum, unique.dyads = unique.dyad.mem, dyad.pairs = dyad.by.obs)
   cov.mat.sum <- Reduce("+", cov.mat.sum.mc)
 
   # substract repeated variance estimator for repeated dyads
@@ -93,13 +120,26 @@ dyad_robust_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
   coef.var <- diag(V.hat)
   coef.se <- sqrt(coef.var)
   outputlst <- list(coef.se, coef.var)
-  return(outputlst[[1]])
+  return(outputlst)
 
 }
 
 # all purpose function; slower than dyad_robust but handles more model types more flexibly
+
+#' Compute dyadic-clustering robust (DCR) variance estimates (customizable)
+#'
+#' This function computes DCR standard error and variance estimates for
+#' model parameters with more model object handling flexibility than dyad_robust.
+#'
+#' @param model Model object
+#' @param dyad_id String for variable name for dyad identifier
+#' @param dyad_mem1 String for variable name for first dyad member
+#' @param dyad_mem2 String for variable name for second dyad member
+#' @param data Data frame object containing dyadic data with dyad identifier variables
+#' @param ef Optional matrix containing empirical estimating functions
+#' @return A list containing DCR standard errors variances for model parameters
 #' @export
-dyad_robust_any <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, vcvHC = NULL, ef = NULL) {
+dcr_custom <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef = NULL) {
 
   # set up starting params
   data[[dyad_mem1]] <- as.character(data[[dyad_mem1]]) # convert to character
@@ -113,12 +153,22 @@ dyad_robust_any <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, dat
   dyad.by.obs <- data[,c(dyad_mem1, dyad_mem2)] # create dyad matrix
 
   # substract repeated variance estimator for repeated dyads
-  rc <- robust.se.nodfc(model, data[, dyad_id])
-  cov.mat.sum.intermed <- -1*rc
+  if (is.null(ef)) {
+    rc <- robust.se.nodfc(model, data[, dyad_id])
+    cov.mat.sum.intermed <- -1*rc
+  } else {
+    rc <- robust.se.nodfc.ef(model, ef, data[, dyad_id])
+    cov.mat.sum.intermed <- -1*rc
+  }
 
   # substract HC variance estimator
-  hc <- hc0.robust(model)
-  cov.mat.sum <- cov.mat.sum.intermed - (N_dyad-2)*hc
+  if (is.null(ef)) {
+    hc <- hc0.robust(model)
+    cov.mat.sum <- cov.mat.sum.intermed - (N_dyad-2)*hc
+  } else {
+    hc <- hc0.robust.ef(model, ef)
+    cov.mat.sum <- cov.mat.sum.intermed - (N_dyad-2)*hc
+  }
 
   # sum variance estimators for clustering on all dyads containing member i
   for(i in 1:N_dyad) {
@@ -126,14 +176,18 @@ dyad_robust_any <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, dat
     print(paste0("Loop status: ", as.character(round(100*(i/N_dyad),2)), "%")) # completion status
     dyad.with.i <- apply(dyad.by.obs, 1, function(x) as.numeric(dyad.mem.i %in% x)) # identify all dyads with member i
     dyad.category <- dyad.with.i*gp.tag + (1-dyad.with.i)*1:nrow(dyad.by.obs) # give unique group tag to dyads containing i
-    cov.mat.sum <- cov.mat.sum + robust.se.nodfc(model, dyad.category)
+    if (is.null(ef)) {
+      cov.mat.sum <- cov.mat.sum + robust.se.nodfc(model, dyad.category)
+    } else {
+      cov.mat.sum <- cov.mat.sum + robust.se.nodfc.ef(model, ef, dyad.category)
+    }
   }
 
   # return standard errors
   coef.var <- diag(cov.mat.sum)
   coef.se <- sqrt(coef.var)
   outputlst <- list(coef.se, coef.var)
-  return(outputlst[[1]])
+  return(outputlst)
 
 }
 
