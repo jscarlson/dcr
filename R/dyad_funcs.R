@@ -68,8 +68,8 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
   coef.se <- sqrt(coef.var)
   outputlst <- list(coef.se, coef.var)
   names(outputlst) <- c("SE", "VAR")
-  outputlst$SE <- param.names
-  outputlst$VAR <- param.names
+  names(outputlst$SE) <- param.names
+  names(outputlst$VAR) <- param.names
   return(outputlst)
 
 }
@@ -140,8 +140,8 @@ dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(p
   coef.se <- sqrt(coef.var)
   outputlst <- list(coef.se, coef.var)
   names(outputlst) <- c("SE", "VAR")
-  outputlst$SE <- param.names
-  outputlst$VAR <- param.names
+  names(outputlst$SE) <- param.names
+  names(outputlst$VAR) <- param.names
   return(outputlst)
 
 }
@@ -219,8 +219,8 @@ dcr_custom <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef
   coef.se <- sqrt(coef.var)
   outputlst <- list(coef.se, coef.var)
   names(outputlst) <- c("SE", "VAR")
-  outputlst$SE <- param.names
-  outputlst$VAR <- param.names
+  names(outputlst$SE) <- param.names
+  names(outputlst$VAR) <- param.names
   return(outputlst)
 
 }
