@@ -3,5 +3,3 @@
 export(dcr)
 export(dcr_custom)
 export(dcr_parallel)
-export(dyad_categ_create)
-export(na_fix_data)

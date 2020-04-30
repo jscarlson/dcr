@@ -9,7 +9,7 @@ dcr_parallel(
   dyad_id,
   dyad_mem1,
   dyad_mem2,
-  ncore = ceiling(detectCores()/2),
+  ncore = ceiling(parallel::detectCores()/2),
   data
 )
 }
@@ -27,7 +27,7 @@ dcr_parallel(
 \item{data}{Data frame object containing dyadic data with dyad identifier variables}
 }
 \value{
-A list containing DCR standard errors variances for model parameters
+A list containing DCR standard errors and variances for model parameters
 }
 \description{
 This function enables the parallel computation of DCR standard error

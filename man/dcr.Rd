@@ -18,7 +18,7 @@ dcr(model, dyad_id, dyad_mem1, dyad_mem2, data)
 \item{data}{Data frame object containing dyadic data with dyad identifier variables}
 }
 \value{
-A list containing DCR standard errors variances for model parameters
+A list containing DCR standard errors and variances for model parameters
 }
 \description{
 This function computes DCR standard error and variance estimates for
