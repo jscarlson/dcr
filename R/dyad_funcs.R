@@ -56,11 +56,13 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
   V.hat <- cov.mat.sum.intermed - (N_dyad-2)*sandwich::vcovHC(model, type="HC0")
 
   # force posdef
+  coefnames <- names(V.hat)
   if (sum(rowSums(V.hat < 0)) >= 1) {
     decomp <- eigen(V.hat, symmetric = TRUE)
     pos_eigens <- pmax(decomp$values, rep.int(0, length(decomp$values)))
     V.hat <- decomp$vectors %*% diag(pos_eigens) %*% t(decomp$vectors)
   }
+  names(V.hat) <- coefnames
 
   # return standard errors
   coef.var <- diag(V.hat)
@@ -124,11 +126,13 @@ dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(p
   V.hat <- cov.mat.sum.intermed - (N_dyad-2)*sandwich::vcovHC(model, type="HC0")
 
   # force posdef
+  coefnames <- names(V.hat)
   if (sum(rowSums(V.hat < 0)) >= 1) {
     decomp <- eigen(V.hat, symmetric = TRUE)
     pos_eigens <- pmax(decomp$values, rep.int(0, length(decomp$values)))
     V.hat <- decomp$vectors %*% diag(pos_eigens) %*% t(decomp$vectors)
   }
+  names(V.hat) <- coefnames
 
   # return standard errors
   coef.var <- diag(V.hat)
@@ -199,11 +203,13 @@ dcr_custom <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef
   }
 
   # force posdef
+  coefnames <- names(cov.mat.sum)
   if (sum(rowSums(cov.mat.sum < 0)) >= 1) {
     decomp <- eigen(cov.mat.sum, symmetric = TRUE)
     pos_eigens <- pmax(decomp$values, rep.int(0, length(decomp$values)))
     cov.mat.sum <- decomp$vectors %*% diag(pos_eigens) %*% t(decomp$vectors)
   }
+  names(cov.mat.sum) <- coefnames
 
   # return standard errors
   coef.var <- diag(cov.mat.sum)
