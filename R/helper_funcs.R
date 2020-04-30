@@ -13,11 +13,13 @@
 ########################
 
 # create cluster vector of appropriate length, per NA omissions
+
 na_fix_data <- function(specdata, clustvar, regvars) {
   return(na.omit(specdata[,c(regvars, clustvar)]))
 }
 
 # create categorical variables for dyads containing member i
+
 dyad_categ_create <- function(dyad_mem1, dyad_mem2, data) {
 
   # start up params
