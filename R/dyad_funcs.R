@@ -24,7 +24,7 @@
 #' @param data Data frame object containing dyadic data with dyad identifier variables
 #' @return A list containing DCR standard errors and variances for model parameters
 #' @export
-dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
+dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE) {
 
   # set up starting params
   data[[dyad_mem1]] <- as.character(data[[dyad_mem1]]) # convert to character
@@ -57,7 +57,7 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
 
   # force posdef
   param.names <- colnames(V.hat)
-  if (sum(rowSums(V.hat < 0)) >= 1) {
+  if (sum(diag(V.hat) < 0) >= 1 & posdef == TRUE) {
     decomp <- eigen(V.hat, symmetric = TRUE)
     pos_eigens <- pmax(decomp$values, rep.int(0, length(decomp$values)))
     V.hat <- decomp$vectors %*% diag(pos_eigens) %*% t(decomp$vectors)
@@ -92,7 +92,7 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data) {
 #' @param data Data frame object containing dyadic data with dyad identifier variables
 #' @return A list containing DCR standard errors and variances for model parameters
 #' @export
-dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(parallel::detectCores()/2), data) {
+dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(parallel::detectCores()/2), data, posdef=TRUE) {
 
   # set up starting params
   data[[dyad_mem1]] <- as.character(data[[dyad_mem1]]) # convert to character
@@ -129,7 +129,7 @@ dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(p
 
   # force posdef
   param.names <- colnames(V.hat)
-  if (sum(rowSums(V.hat < 0)) >= 1) {
+  if (sum(diag(V.hat) < 0) >= 1 & posdef == TRUE) {
     decomp <- eigen(V.hat, symmetric = TRUE)
     pos_eigens <- pmax(decomp$values, rep.int(0, length(decomp$values)))
     V.hat <- decomp$vectors %*% diag(pos_eigens) %*% t(decomp$vectors)
@@ -162,7 +162,7 @@ dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(p
 #' @param ef Optional matrix containing empirical estimating functions
 #' @return A list containing DCR standard errors and variances for model parameters
 #' @export
-dcr_custom <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef = NULL) {
+dcr_custom <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef = NULL, posdef = TRUE) {
 
   # set up starting params
   data[[dyad_mem1]] <- as.character(data[[dyad_mem1]]) # convert to character
@@ -208,7 +208,7 @@ dcr_custom <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef
 
   # force posdef
   param.names <- colnames(cov.mat.sum)
-  if (sum(rowSums(cov.mat.sum < 0)) >= 1) {
+  if (sum(diag(V.hat) < 0) >= 1 & posdef == TRUE) {
     decomp <- eigen(cov.mat.sum, symmetric = TRUE)
     pos_eigens <- pmax(decomp$values, rep.int(0, length(decomp$values)))
     cov.mat.sum <- decomp$vectors %*% diag(pos_eigens) %*% t(decomp$vectors)

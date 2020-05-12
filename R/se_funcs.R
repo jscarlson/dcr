@@ -40,7 +40,7 @@ hc0.robust <- function(model){
 hc0.robust.ef <- function(model, ef){
   dfc <- 1
   uj <- ef
-  cov.mat <- dfc * sandwich::sandwich(model, meat = Matrix::crossprod(uj)/nrow(uj))
+  cov.mat <- dfc * sandwich::sandwich(model, meat = crossprod(uj)/nrow(uj))
   return(cov.mat)
 }
 
