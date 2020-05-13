@@ -208,7 +208,7 @@ dcr_custom <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef
 
   # force posdef
   param.names <- colnames(cov.mat.sum)
-  if (sum(diag(V.hat) < 0) >= 1 & posdef == TRUE) {
+  if (sum(diag(cov.mat.sum) < 0) >= 1 & posdef == TRUE) {
     decomp <- eigen(cov.mat.sum, symmetric = TRUE)
     pos_eigens <- pmax(decomp$values, rep.int(0, length(decomp$values)))
     cov.mat.sum <- decomp$vectors %*% diag(pos_eigens) %*% t(decomp$vectors)
