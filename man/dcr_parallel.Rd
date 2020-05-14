@@ -10,7 +10,8 @@ dcr_parallel(
   dyad_mem1,
   dyad_mem2,
   ncore = ceiling(parallel::detectCores()/2),
-  data
+  data,
+  posdef = TRUE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ dcr_parallel(
 \item{ncore}{Integer specifying the number of cores to be used for parallel computation}
 
 \item{data}{Data frame object containing dyadic data with dyad identifier variables}
+
+\item{posdef}{Logical value indicating whether or not final estimated variance-covariance matrix is forced to be positive semi-definite (note: this guards against the possibility of negative variance estimates)}
 }
 \value{
 A list containing DCR standard errors and variances for model parameters

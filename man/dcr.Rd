@@ -4,7 +4,7 @@
 \alias{dcr}
 \title{Compute dyadic-clustering robust (DCR) variance estimates}
 \usage{
-dcr(model, dyad_id, dyad_mem1, dyad_mem2, data)
+dcr(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE)
 }
 \arguments{
 \item{model}{Model object (must be compatible with Sandwich package functions)}
@@ -16,6 +16,8 @@ dcr(model, dyad_id, dyad_mem1, dyad_mem2, data)
 \item{dyad_mem2}{String for variable name for second dyad member}
 
 \item{data}{Data frame object containing dyadic data with dyad identifier variables}
+
+\item{posdef}{Logical value indicating whether or not final estimated variance-covariance matrix is forced to be positive semi-definite (note: this guards against the possibility of negative variance estimates)}
 }
 \value{
 A list containing DCR standard errors and variances for model parameters

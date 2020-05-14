@@ -4,7 +4,16 @@
 \alias{dcr_custom}
 \title{Compute dyadic-clustering robust (DCR) variance estimates (customizable)}
 \usage{
-dcr_custom(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef = NULL)
+dcr_custom(
+  model,
+  dyad_id,
+  dyad_mem1,
+  dyad_mem2,
+  spec_vars,
+  data,
+  ef = NULL,
+  posdef = TRUE
+)
 }
 \arguments{
 \item{model}{Model object}
@@ -20,6 +29,8 @@ dcr_custom(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef = NULL)
 \item{data}{Data frame object containing dyadic data with dyad identifier variables}
 
 \item{ef}{Optional matrix containing empirical estimating functions}
+
+\item{posdef}{Logical value indicating whether or not final estimated variance-covariance matrix is forced to be positive semi-definite (note: this guards against the possibility of negative variance estimates)}
 }
 \value{
 A list containing DCR standard errors and variances for model parameters
