@@ -12,17 +12,17 @@
 ### Compute cluster–robust standard errors for dyadic data ###
 ##############################################################
 
-#' Compute dyadic-clustering robust (DCR) variance estimates
+#' Compute dyadic clustering robust (DCR) variance estimates
 #'
 #' This function computes DCR standard error and variance estimates for
 #' model parameters.
 #'
-#' @param model Model object (must be compatible with Sandwich package functions)
-#' @param dyad_id String for variable name for dyad identifier
-#' @param dyad_mem1 String for variable name for first dyad member
-#' @param dyad_mem2 String for variable name for second dyad member
-#' @param data Data frame object containing dyadic data with dyad identifier variables
-#' @param posdef Logical value indicating whether or not final estimated variance-covariance matrix is forced to be positive semi-definite (note: this guards against the possibility of negative variance estimates)
+#' @param model Model object (note: must be compatible with `sandwich` package functions)
+#' @param dyad_id String for name of dyad identifier variable
+#' @param dyad_mem1 String for name of first dyad member identifier variable
+#' @param dyad_mem2 String for name of second dyad member identifier variable
+#' @param data `data.frame` object containing dyadic data, including dyad and dyad member identifier variables
+#' @param posdef Logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite
 #' @return A list containing DCR standard errors and variances for model parameters
 #' @export
 dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE) {
@@ -77,7 +77,7 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE) {
 
 # parallel version
 
-#' Compute dyadic-clustering robust (DCR) variance estimates (parallelized)
+#' Compute dyadic clustering robust (DCR) variance estimates (parallelized)
 #'
 #' This function enables the parallel computation of DCR standard error
 #' and variance estimates.
@@ -85,13 +85,13 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE) {
 #' The default number of cores is set to the ceiling of half the total number of cores
 #' available.
 #'
-#' @param model Model object (must be compatible with Sandwich package functions)
-#' @param dyad_id String for variable name for dyad identifier
-#' @param dyad_mem1 String for variable name for first dyad member
-#' @param dyad_mem2 String for variable name for second dyad member
+#' @param model Model object (note: must be compatible with `sandwich` package functions)
+#' @param dyad_id String for name of dyad identifier variable
+#' @param dyad_mem1 String for name of first dyad member identifier variable
+#' @param dyad_mem2 String for name of second dyad member identifier variable
 #' @param ncore Integer specifying the number of cores to be used for parallel computation
-#' @param data Data frame object containing dyadic data with dyad identifier variables
-#' @param posdef Logical value indicating whether or not final estimated variance-covariance matrix is forced to be positive semi-definite (note: this guards against the possibility of negative variance estimates)
+#' @param data `data.frame` object containing dyadic data, including dyad and dyad member identifier variables
+#' @param posdef Logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite
 #' @return A list containing DCR standard errors and variances for model parameters
 #' @export
 dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(parallel::detectCores()/2), data, posdef=TRUE) {
@@ -150,19 +150,19 @@ dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(p
 
 # all purpose function; slower than dyad_robust but handles more model types more flexibly
 
-#' Compute dyadic-clustering robust (DCR) variance estimates (customizable)
+#' Compute dyadic clustering robust (DCR) variance estimates (customizable)
 #'
 #' This function computes DCR standard error and variance estimates for
-#' model parameters with more model object handling flexibility than dyad_robust.
+#' model parameters with more model object handling flexibility than `dcr`.
 #'
 #' @param model Model object
-#' @param dyad_id String for variable name for dyad identifier
-#' @param dyad_mem1 String for variable name for first dyad member
-#' @param dyad_mem2 String for variable name for second dyad member
+#' @param dyad_id String for name of dyad identifier variable
+#' @param dyad_mem1 String for name of first dyad member identifier variable
+#' @param dyad_mem2 String for name of second dyad member identifier variable
 #' @param spec_vars String vector of variable names in model specification
-#' @param data Data frame object containing dyadic data with dyad identifier variables
+#' @param data `data.frame` object containing dyadic data, including dyad and dyad member identifier variables
 #' @param ef Optional matrix containing empirical estimating functions
-#' @param posdef Logical value indicating whether or not final estimated variance-covariance matrix is forced to be positive semi-definite (note: this guards against the possibility of negative variance estimates)
+#' @param posdef Logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite
 #' @return A list containing DCR standard errors and variances for model parameters
 #' @export
 dcr_custom <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef = NULL, posdef = TRUE) {
