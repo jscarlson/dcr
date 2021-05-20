@@ -2,7 +2,7 @@
 % Please edit documentation in R/dyad_funcs.R
 \name{dcr_custom}
 \alias{dcr_custom}
-\title{Compute dyadic-clustering robust (DCR) variance estimates (customizable)}
+\title{Compute dyadic clustering robust (DCR) variance estimates (customizable)}
 \usage{
 dcr_custom(
   model,
@@ -18,24 +18,24 @@ dcr_custom(
 \arguments{
 \item{model}{Model object}
 
-\item{dyad_id}{String for variable name for dyad identifier}
+\item{dyad_id}{String for name of dyad identifier variable}
 
-\item{dyad_mem1}{String for variable name for first dyad member}
+\item{dyad_mem1}{String for name of first dyad member identifier variable}
 
-\item{dyad_mem2}{String for variable name for second dyad member}
+\item{dyad_mem2}{String for name of second dyad member identifier variable}
 
 \item{spec_vars}{String vector of variable names in model specification}
 
-\item{data}{Data frame object containing dyadic data with dyad identifier variables}
+\item{data}{\code{data.frame} object containing dyadic data, including dyad and dyad member identifier variables}
 
 \item{ef}{Optional matrix containing empirical estimating functions}
 
-\item{posdef}{Logical value indicating whether or not final estimated variance-covariance matrix is forced to be positive semi-definite (note: this guards against the possibility of negative variance estimates)}
+\item{posdef}{Logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite}
 }
 \value{
 A list containing DCR standard errors and variances for model parameters
 }
 \description{
 This function computes DCR standard error and variance estimates for
-model parameters with more model object handling flexibility than dyad_robust.
+model parameters with more model object handling flexibility than \code{dcr}.
 }

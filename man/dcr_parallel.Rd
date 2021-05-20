@@ -2,7 +2,7 @@
 % Please edit documentation in R/dyad_funcs.R
 \name{dcr_parallel}
 \alias{dcr_parallel}
-\title{Compute dyadic-clustering robust (DCR) variance estimates (parallelized)}
+\title{Compute dyadic clustering robust (DCR) variance estimates (parallelized)}
 \usage{
 dcr_parallel(
   model,
@@ -15,19 +15,19 @@ dcr_parallel(
 )
 }
 \arguments{
-\item{model}{Model object (must be compatible with Sandwich package functions)}
+\item{model}{Model object (note: must be compatible with \code{sandwich} package functions)}
 
-\item{dyad_id}{String for variable name for dyad identifier}
+\item{dyad_id}{String for name of dyad identifier variable}
 
-\item{dyad_mem1}{String for variable name for first dyad member}
+\item{dyad_mem1}{String for name of first dyad member identifier variable}
 
-\item{dyad_mem2}{String for variable name for second dyad member}
+\item{dyad_mem2}{String for name of second dyad member identifier variable}
 
 \item{ncore}{Integer specifying the number of cores to be used for parallel computation}
 
-\item{data}{Data frame object containing dyadic data with dyad identifier variables}
+\item{data}{\code{data.frame} object containing dyadic data, including dyad and dyad member identifier variables}
 
-\item{posdef}{Logical value indicating whether or not final estimated variance-covariance matrix is forced to be positive semi-definite (note: this guards against the possibility of negative variance estimates)}
+\item{posdef}{Logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite}
 }
 \value{
 A list containing DCR standard errors and variances for model parameters
