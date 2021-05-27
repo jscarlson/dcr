@@ -38,12 +38,11 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE) {
   dyad.by.obs <- data[,c(dyad_mem1, dyad_mem2)] # create dyad matrix
 
   # progress bar
-  progress_bar <- txtProgressBar(min=1, max=N_dyad, style = 1, char="=")
+  progress_bar <- txtProgressBar(min=1, max=N_dyad, style = 3, char="=")
 
   # sum variance estimators for clustering on all dyads containing member i
   for(i in 1:N_dyad) {
     dyad.mem.i <- unique.dyad.mem[i] # set member i
-    print(paste0("Loop status: ", as.character(round(100*(i/N_dyad),2)), "%")) # completion status
     dyad.with.i <- apply(dyad.by.obs, 1, function(x) as.numeric(dyad.mem.i %in% x)) # identify all dyads with member i
     dyad.category <- dyad.with.i*gp.tag + (1-dyad.with.i)*1:nrow(dyad.by.obs) # give unique group tag to dyads containing i
     if (i==1) {
