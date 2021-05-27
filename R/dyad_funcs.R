@@ -37,6 +37,9 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE) {
   N_dyad <- length(unique.dyad.mem)
   dyad.by.obs <- data[,c(dyad_mem1, dyad_mem2)] # create dyad matrix
 
+  # progress bar
+  progress_bar <- txtProgressBar(min=1, max=N_dyad, style = 1, char="=")
+
   # sum variance estimators for clustering on all dyads containing member i
   for(i in 1:N_dyad) {
     dyad.mem.i <- unique.dyad.mem[i] # set member i
@@ -48,7 +51,11 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE) {
     } else if (i!=1) {
       cov.mat.sum <- cov.mat.sum + sandwich::vcovCL(model, dyad.category, type = "HC0", multi0 = TRUE)
     }
+    setTxtProgressBar(progress_bar, value = i)
   }
+
+  # close prog bar
+  close(progress_bar)
 
   # substract repeated variance estimator for repeated dyads
   cov.mat.sum.intermed <- cov.mat.sum - sandwich::vcovCL(model, data[, dyad_id], type = "HC0", multi0 = TRUE)
