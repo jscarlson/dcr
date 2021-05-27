@@ -41,6 +41,7 @@ dcr <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE) {
   progress_bar <- txtProgressBar(min=1, max=N_dyad, style = 3, char="=")
 
   # sum variance estimators for clustering on all dyads containing member i
+  print("Computing Dyad Member CRSEs")
   for(i in 1:N_dyad) {
     dyad.mem.i <- unique.dyad.mem[i] # set member i
     dyad.with.i <- apply(dyad.by.obs, 1, function(x) as.numeric(dyad.mem.i %in% x)) # identify all dyads with member i
@@ -126,6 +127,7 @@ dcr_parallel <- function(model, dyad_id, dyad_mem1, dyad_mem2, ncore = ceiling(p
       cov.mat <- sandwich::vcovCL(model, dyad.category, type = "HC0", multi0 = TRUE)
     }
   }
+  print("Computing Dyad Member CRSEs")
   cov.mat.sum.mc <- parallel::mclapply(id_iter, dyad_cont_mem_clust, mc.cores = ncore, s = cov.mat.sum, unique.dyads = unique.dyad.mem, dyad.pairs = dyad.by.obs)
   cov.mat.sum <- Reduce("+", cov.mat.sum.mc)
 
@@ -202,7 +204,11 @@ dcr_custom <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef
     cov.mat.sum <- cov.mat.sum.intermed - (N_dyad-2)*hc
   }
 
+  # progress bar
+  progress_bar <- txtProgressBar(min=1, max=N_dyad, style = 3, char="=")
+
   # sum variance estimators for clustering on all dyads containing member i
+  print("Computing Dyad Member CRSEs")
   for(i in 1:N_dyad) {
     dyad.mem.i <- unique.dyad.mem[i] # set member i
     print(paste0("Loop status: ", as.character(round(100*(i/N_dyad),2)), "%")) # completion status
@@ -213,7 +219,11 @@ dcr_custom <- function(model, dyad_id, dyad_mem1, dyad_mem2, spec_vars, data, ef
     } else {
       cov.mat.sum <- cov.mat.sum + robust.se.nodfc.ef(model, ef, dyad.category)
     }
+    setTxtProgressBar(progress_bar, value = i)
   }
+
+  # close prog bar
+  close(progress_bar)
 
   # force posdef
   param.names <- colnames(cov.mat.sum)
