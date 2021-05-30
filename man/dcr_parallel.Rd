@@ -15,7 +15,7 @@ dcr_parallel(
 )
 }
 \arguments{
-\item{model}{Model object (note: must be compatible with \code{sandwich} package functions)}
+\item{model}{Model object}
 
 \item{dyad_id}{String for name of dyad identifier variable}
 

@@ -7,7 +7,7 @@
 dcr(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE)
 }
 \arguments{
-\item{model}{Model object (note: must be compatible with \code{sandwich} package functions)}
+\item{model}{Model object}
 
 \item{dyad_id}{String for name of dyad identifier variable}
 
