@@ -2,3 +2,4 @@
 
 export(dcr)
 export(dcr_parallel)
+export(dcr_sandwich)
