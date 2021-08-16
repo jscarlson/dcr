@@ -93,8 +93,8 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = FALS
   outputlst <- list(coef.se, coef.var)
 
   names(outputlst) <- c("dcrse", "dcrvar")
-  names(outputlst$SE) <- param.names
-  names(outputlst$VAR) <- param.names
+  names(outputlst$dcrse) <- param.names
+  names(outputlst$dcrvar) <- param.names
 
   return(outputlst)
 
@@ -172,8 +172,8 @@ dcr_sandwich <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TR
   outputlst <- list(coef.se, coef.var)
 
   names(outputlst) <- c("dcrse", "dcrvar")
-  names(outputlst$SE) <- param.names
-  names(outputlst$VAR) <- param.names
+  names(outputlst$dcrse) <- param.names
+  names(outputlst$dcrvar) <- param.names
   return(outputlst)
 
 }
