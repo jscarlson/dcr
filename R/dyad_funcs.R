@@ -14,15 +14,16 @@
 
 #' Compute dyadic clustering robust (DCR) variance estimates
 #'
-#' This function computes DCR standard error and variance estimates for
-#' model parameters.
+#' This function computes DCR variance estimates and standard errors
+#' (DCRSEs) for model parameters.
 #'
-#' @param model Model object
-#' @param dyad_mem1 String for name of first dyad member identifier variable
-#' @param dyad_mem2 String for name of second dyad member identifier variable
-#' @param data `data.frame` object containing dyadic data, including dyad and dyad member identifier variables
-#' @param posdef Logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite
-#' @return A list containing DCR standard errors and variances for model parameters
+#' @param model A model object.
+#' @param dyad_mem1 A string for the name of first dyad member identifier variable.
+#' @param dyad_mem2 A string for the name of second dyad member identifier variable.
+#' @param data A `data.frame` object containing dyadic data.
+#' @param posdef A logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite.
+#' @param dofcorr A logical value indicating whether or not to apply a small sample correction to the final DCRSE estimates. This correction is equivalent to multiplying DCRSEs by sqrt(N/(N-1)), where N is the number of unique dyad members in the analytic sample. Correspondingly, when computing p-values, the test statistic should be compared to a t-distribution with DOF = N - 1.
+#' @return A list containing DCRSEs and DCR variances for model parameters.
 #' @export
 dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = FALSE) {
 
@@ -103,16 +104,16 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = FALS
 
 #' Compute dyadic clustering robust (DCR) variance estimates (`sandwich` version)
 #'
-#' This function computes DCR standard error and variance estimates for
-#' model parameters.
+#' This function computes DCR variance estimates and standard errors
+#' (DCRSEs) for model parameters.
 #'
-#' @param model Model object
-#' @param dyad_id String for name of dyad identifier variable
-#' @param dyad_mem1 String for name of first dyad member identifier variable
-#' @param dyad_mem2 String for name of second dyad member identifier variable
-#' @param data `data.frame` object containing dyadic data, including dyad and dyad member identifier variables
-#' @param posdef Logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite
-#' @return A list containing DCR standard errors and variances for model parameters
+#' @param model A model object.
+#' @param dyad_mem1 A string for the name of first dyad member identifier variable.
+#' @param dyad_mem2 A string for the name of second dyad member identifier variable.
+#' @param data A `data.frame` object containing dyadic data.
+#' @param posdef A logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite.
+#' @param dofcorr A logical value indicating whether or not to apply a small sample correction to the final DCRSE estimates. This correction is equivalent to multiplying DCRSEs by sqrt(N/(N-1)), where N is the number of unique dyad members in the analytic sample. Correspondingly, when computing p-values, the test statistic should be compared to a t-distribution with DOF = N - 1.
+#' @return A list containing DCRSEs and DCR variances for model parameters.
 #' @export
 dcr_sandwich <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = FALSE) {
 

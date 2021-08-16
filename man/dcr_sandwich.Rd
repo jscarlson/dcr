@@ -4,25 +4,33 @@
 \alias{dcr_sandwich}
 \title{Compute dyadic clustering robust (DCR) variance estimates (\code{sandwich} version)}
 \usage{
-dcr_sandwich(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE)
+dcr_sandwich(
+  model,
+  dyad_id,
+  dyad_mem1,
+  dyad_mem2,
+  data,
+  posdef = TRUE,
+  dofcorr = FALSE
+)
 }
 \arguments{
-\item{model}{Model object}
+\item{model}{A model object.}
 
-\item{dyad_id}{String for name of dyad identifier variable}
+\item{dyad_mem1}{A string for the name of first dyad member identifier variable.}
 
-\item{dyad_mem1}{String for name of first dyad member identifier variable}
+\item{dyad_mem2}{A string for the name of second dyad member identifier variable.}
 
-\item{dyad_mem2}{String for name of second dyad member identifier variable}
+\item{data}{A \code{data.frame} object containing dyadic data.}
 
-\item{data}{\code{data.frame} object containing dyadic data, including dyad and dyad member identifier variables}
+\item{posdef}{A logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite.}
 
-\item{posdef}{Logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite}
+\item{dofcorr}{A logical value indicating whether or not to apply a small sample correction to the final DCRSE estimates. This correction is equivalent to multiplying DCRSEs by sqrt(N/(N-1)), where N is the number of unique dyad members in the analytic sample. Correspondingly, when computing p-values, the test statistic should be compared to a t-distribution with DOF = N - 1.}
 }
 \value{
-A list containing DCR standard errors and variances for model parameters
+A list containing DCRSEs and DCR variances for model parameters.
 }
 \description{
-This function computes DCR standard error and variance estimates for
-model parameters.
+This function computes DCR variance estimates and standard errors
+(DCRSEs) for model parameters.
 }
