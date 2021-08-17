@@ -25,7 +25,7 @@
 #' @param dofcorr A logical value indicating whether or not to apply a small sample correction to the final DCRSE estimates. This correction is equivalent to multiplying DCRSEs by sqrt(N/(N-1)), where N is the number of unique dyad members in the analytic sample. Correspondingly, when computing p-values, the test statistic should be compared to a t-distribution with DOF = N - 1.
 #' @return A list containing DCRSEs and DCR variances for model parameters, as well as the number of unique dyad members in the analytic sample.
 #' @export
-dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = FALSE) {
+dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE) {
 
   create_dyadid <- function(data, name, dyad_mem1, dyad_mem2, directed = F) {
     dyadframe <- data[,c(dyad_mem1, dyad_mem2)]
@@ -113,7 +113,7 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = FALS
 #' @param dofcorr A logical value indicating whether or not to apply a small sample correction to the final DCRSE estimates. This correction is equivalent to multiplying DCRSEs by sqrt(N/(N-1)), where N is the number of unique dyad members in the analytic sample. Correspondingly, when computing p-values, the test statistic should be compared to a t-distribution with DOF = N - 1.
 #' @return A list containing DCRSEs and DCR variances for model parameters, as well as the number of unique dyad members in the analytic sample.
 #' @export
-dcr_sandwich <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = FALSE) {
+dcr_sandwich <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE) {
 
   # set up starting params
   data[[dyad_mem1]] <- as.character(data[[dyad_mem1]]) # convert to character
