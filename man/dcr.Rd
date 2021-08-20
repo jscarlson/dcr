@@ -4,7 +4,7 @@
 \alias{dcr}
 \title{Compute dyadic clustering robust (DCR) variance estimates}
 \usage{
-dcr(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = FALSE)
+dcr(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE)
 }
 \arguments{
 \item{model}{A model object.}

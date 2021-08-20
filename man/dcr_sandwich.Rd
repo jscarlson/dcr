@@ -11,7 +11,7 @@ dcr_sandwich(
   dyad_mem2,
   data,
   posdef = TRUE,
-  dofcorr = FALSE
+  dofcorr = TRUE
 )
 }
 \arguments{
