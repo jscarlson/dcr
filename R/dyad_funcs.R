@@ -52,7 +52,7 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE
 
   progress_bar <- txtProgressBar(min = 1, max = N_dyad, style = 3, char = "=")
 
-  print("Computing Dyad Member CRSEs")
+  print("Multiway decomposition computation in progress!")
 
   for (i in 1:N_dyad) {
 
@@ -113,23 +113,34 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE
 #' @param dofcorr A logical value indicating whether or not to apply a small sample correction to the final DCRSE estimates. This correction is equivalent to multiplying DCRSEs by sqrt(N/(N-1)), where N is the number of unique dyad members in the analytic sample. Correspondingly, when computing p-values, the test statistic should be compared to a t-distribution with DOF = N - 1.
 #' @return A list containing DCRSEs and DCR variances for model parameters, as well as the number of unique dyad members in the analytic sample.
 #' @export
-dcr_sandwich <- function(model, dyad_id, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE) {
+dcr_sandwich <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE) {
 
-  # set up starting params
-  data[[dyad_mem1]] <- as.character(data[[dyad_mem1]]) # convert to character
-  data[[dyad_mem2]] <- as.character(data[[dyad_mem2]]) # convert to character
-  data[[dyad_id]] <- as.character(data[[dyad_id]]) # convert to character
-  gp.tag <- -99 # arbitrary tag
-  unique.dyad.mem <- na.omit(unique(c(data[[dyad_mem1]], data[[dyad_mem2]]))) # unique members
-  unique.dyad.mem <- unique.dyad.mem[order(unique.dyad.mem)] # order members
+  create_dyadid <- function(data, name, dyad_mem1, dyad_mem2, directed = F) {
+    dyadframe <- data[,c(dyad_mem1, dyad_mem2)]
+    if (directed == T) {
+      f <- function(x, y) c(as.character(x), as.character(y))
+    } else {
+      f <- function(x, y) sort(c(as.character(x), as.character(y)))
+    }
+    sorteddyads <- mapply(f, dyadframe[[dyad_mem1]], dyadframe[[dyad_mem2]], SIMPLIFY = F)
+    dyad_id <- unlist(lapply(sorteddyads, function(x) as.factor(paste0(x, collapse = "_"))), use.names = F)
+    data[[name]] <- as.character(dyad_id)
+    return(data)
+  }
+
+  data[[dyad_mem1]] <- as.character(data[[dyad_mem1]])
+  data[[dyad_mem2]] <- as.character(data[[dyad_mem2]])
+  data <- create_dyadid(data, "_dcr_dyad_id", dyad_mem1, dyad_mem2, directed = F)
+
+  gp.tag <- -99
+  unique.dyad.mem <- na.omit(unique(c(data[[dyad_mem1]], data[[dyad_mem2]])))
+  unique.dyad.mem <- unique.dyad.mem[order(unique.dyad.mem)]
   N_dyad <- length(unique.dyad.mem)
-  dyad.by.obs <- data[,c(dyad_mem1, dyad_mem2)] # create dyad matrix
+  dyad.by.obs <- data[, c(dyad_mem1, dyad_mem2)]
 
-  # progress bar
-  progress_bar <- txtProgressBar(min=1, max=N_dyad, style = 3, char="=")
+  progress_bar <- txtProgressBar(min = 1, max = N_dyad, style = 3, char = "=")
 
-  # sum variance estimators for clustering on all dyads containing member i
-  print("Computing Dyad Member CRSEs")
+  print("Multiway decomposition computation in progress!")
   for(i in 1:N_dyad) {
     dyad.mem.i <- unique.dyad.mem[i] # set member i
     dyad.with.i <- apply(dyad.by.obs, 1, function(x) as.numeric(dyad.mem.i %in% x)) # identify all dyads with member i
