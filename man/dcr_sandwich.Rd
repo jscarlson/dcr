@@ -4,15 +4,7 @@
 \alias{dcr_sandwich}
 \title{Compute dyadic clustering robust (DCR) variance estimates (\code{sandwich} version)}
 \usage{
-dcr_sandwich(
-  model,
-  dyad_id,
-  dyad_mem1,
-  dyad_mem2,
-  data,
-  posdef = TRUE,
-  dofcorr = TRUE
-)
+dcr_sandwich(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE)
 }
 \arguments{
 \item{model}{A model object.}
@@ -32,5 +24,5 @@ A list containing DCRSEs and DCR variances for model parameters, as well as the 
 }
 \description{
 This function computes DCR variance estimates and standard errors
-(DCRSEs) for model parameters.
+(DCRSEs) for model parameters with a \code{sandwich} package backend.
 }

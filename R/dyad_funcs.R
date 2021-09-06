@@ -103,7 +103,7 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE
 #' Compute dyadic clustering robust (DCR) variance estimates (`sandwich` version)
 #'
 #' This function computes DCR variance estimates and standard errors
-#' (DCRSEs) for model parameters.
+#' (DCRSEs) for model parameters with a `sandwich` package backend.
 #'
 #' @param model A model object.
 #' @param dyad_mem1 A string for the name of first dyad member identifier variable.

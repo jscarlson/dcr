@@ -12,40 +12,32 @@
 ### Helper functions ###
 ########################
 
-# create cluster vector of appropriate length, per NA omissions
+#' Create a dyad identifier variable
+#'
+#' This function returns a `data.frame` with a new dyad ID variable based
+#' on a provided `data.frame` with individual dyad member ID variables.
+#'
+#' @param data A `data.frame` object containing individual dyad member ID variables.
+#' @param name A string for the name of new dyad ID variable to be created.
+#' @param dyad_mem1 A string for the name of first dyad member ID variable.
+#' @param dyad_mem2 A string for the name of second dyad member ID variable.
+#' @param directed A logical value indicating whether the dyad ID should be for the directed or undirected dyad.
+#' @return The input `data.frame` with a new dyad ID variable appended to it.
+#' @export
+create_dyadid <- function(data, name, dyad_mem1, dyad_mem2, directed = F) {
 
-na_fix_data <- function(specdata, clustvar, regvars) {
-  return(na.omit(specdata[,c(regvars, clustvar)]))
-}
+  dyadframe <- data[,c(dyad_mem1, dyad_mem2)]
 
-# create categorical variables for dyads containing member i
-
-dyad_categ_create <- function(dyad_mem1, dyad_mem2, data) {
-
-  # start up params
-  unique.dyad.mem <- unique(c(data[,dyad_mem1], data[,dyad_mem2])) # unique members
-  unique.dyad.mem <- unique.dyad.mem[order(unique.dyad.mem)] # order members
-  N_dyad <- length(unique.dyad.mem)
-  dyad.by.obs <- data[,c(dyad_mem1, dyad_mem2)] # create dyad matrix
-
-  # create categorical variables for dyads containing i
-  for(i in 1:N_dyad) {
-    dyad.mem.i <- unique.dyad.mem[i] # set member i
-    dyad.with.i <- apply(dyad.by.obs, 1, function(x) as.numeric(dyad.mem.i %in% x)) # identify all dyads with member i
-    dyad.category <- dyad.with.i*gp.tag + (1-dyad.with.i)*1:nrow(dyad.by.obs) # give unique group tag to dyads containing i
-    namelencurr <- length(names(new_data))
-    new_data <- cbind(data, dyad.category)
-    names(new_data)[namelencurr + 1] <- paste0("con_", dyad.mem.i)
+  if (directed == T) {
+    f <- function(x, y) c(as.character(x), as.character(y))
+  } else {
+    f <- function(x, y) sort(c(as.character(x), as.character(y)))
   }
 
-  # return updated dataframe
-  return(new_data)
+  sorteddyads <- mapply(f, dyadframe[[dyad_mem1]], dyadframe[[dyad_mem2]], SIMPLIFY = F)
+  dyad_id <- unlist(lapply(sorteddyads, function(x) as.factor(paste0(x, collapse = "_"))), use.names = F)
+  data[[name]] <- as.character(dyad_id)
+
+  return(data)
 
 }
-
-###############
-### SOURCES ###
-###############
-
-# Samii, Cyrus, 2015, "Cluster-Robust Variance Estimation for Dyadic Data",
-# https://doi.org/10.7910/DVN/OMJYE5, Harvard Dataverse, V2, UNF:6:WJJ3ZmDS7COvpy1kwztcMQ==[fileUNF]
