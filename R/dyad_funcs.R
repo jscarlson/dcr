@@ -27,28 +27,18 @@
 #' @export
 dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofcorr = FALSE) {
 
-  create_dyadid <- function(data, name, dyad_mem1, dyad_mem2, directed = F) {
-    dyadframe <- data[,c(dyad_mem1, dyad_mem2)]
-    if (directed == T) {
-      f <- function(x, y) c(as.character(x), as.character(y))
-    } else {
-      f <- function(x, y) sort(c(as.character(x), as.character(y)))
-    }
-    sorteddyads <- mapply(f, dyadframe[[dyad_mem1]], dyadframe[[dyad_mem2]], SIMPLIFY = F)
-    dyad_id <- unlist(lapply(sorteddyads, function(x) as.factor(paste0(x, collapse = "_"))), use.names = F)
-    data[[name]] <- as.character(dyad_id)
-    return(data)
-  }
-
   data[[dyad_mem1]] <- as.character(data[[dyad_mem1]])
   data[[dyad_mem2]] <- as.character(data[[dyad_mem2]])
-  data <- create_dyadid(data, "_dcr_dyad_id", dyad_mem1, dyad_mem2, directed = F)
+  data <- dcr::create_dyadid(data, "_dcr_dyad_id", dyad_mem1, dyad_mem2, directed = F)
+
+  touse_obs <- as.integer(rownames(model.frame(model)))
+  touse_data <- data[touse_obs,]
 
   gp.tag <- -99
-  unique.dyad.mem <- na.omit(unique(c(data[[dyad_mem1]], data[[dyad_mem2]])))
+  unique.dyad.mem <- na.omit(unique(c(touse_data[[dyad_mem1]], touse_data[[dyad_mem2]])))
   unique.dyad.mem <- unique.dyad.mem[order(unique.dyad.mem)]
   N_dyad <- length(unique.dyad.mem)
-  dyad.by.obs <- data[, c(dyad_mem1, dyad_mem2)]
+  dyad.by.obs <- touse_data[, c(dyad_mem1, dyad_mem2)]
 
   progress_bar <- txtProgressBar(min = 1, max = N_dyad, style = 3, char = "=")
 
@@ -72,8 +62,8 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofcorr = FAL
 
   close(progress_bar)
 
-  cov.mat.sum.intermed <- cov.mat.sum - multiwayvcov::cluster.vcov(model, data[, "_dcr_dyad_id"], df_correction = FALSE)
-  V.hat <- cov.mat.sum.intermed - (N_dyad - 2) * multiwayvcov::cluster.vcov(model, 1:nrow(data), df_correction = FALSE)
+  cov.mat.sum.intermed <- cov.mat.sum - multiwayvcov::cluster.vcov(model, touse_data[, "_dcr_dyad_id"], df_correction = FALSE)
+  V.hat <- cov.mat.sum.intermed - (N_dyad - 2) * multiwayvcov::cluster.vcov(model, 1:nrow(touse_data), df_correction = FALSE)
 
   param.names <- colnames(V.hat)
 
@@ -114,28 +104,18 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofcorr = FAL
 #' @export
 dcr_sandwich <- function(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofcorr = FALSE) {
 
-  create_dyadid <- function(data, name, dyad_mem1, dyad_mem2, directed = F) {
-    dyadframe <- data[,c(dyad_mem1, dyad_mem2)]
-    if (directed == T) {
-      f <- function(x, y) c(as.character(x), as.character(y))
-    } else {
-      f <- function(x, y) sort(c(as.character(x), as.character(y)))
-    }
-    sorteddyads <- mapply(f, dyadframe[[dyad_mem1]], dyadframe[[dyad_mem2]], SIMPLIFY = F)
-    dyad_id <- unlist(lapply(sorteddyads, function(x) as.factor(paste0(x, collapse = "_"))), use.names = F)
-    data[[name]] <- as.character(dyad_id)
-    return(data)
-  }
-
   data[[dyad_mem1]] <- as.character(data[[dyad_mem1]])
   data[[dyad_mem2]] <- as.character(data[[dyad_mem2]])
-  data <- create_dyadid(data, "_dcr_dyad_id", dyad_mem1, dyad_mem2, directed = F)
+  data <- dcr::create_dyadid(data, "_dcr_dyad_id", dyad_mem1, dyad_mem2, directed = F)
+
+  touse_obs <- as.integer(rownames(model.frame(model)))
+  touse_data <- data[touse_obs,]
 
   gp.tag <- -99
-  unique.dyad.mem <- na.omit(unique(c(data[[dyad_mem1]], data[[dyad_mem2]])))
+  unique.dyad.mem <- na.omit(unique(c(touse_data[[dyad_mem1]], touse_data[[dyad_mem2]])))
   unique.dyad.mem <- unique.dyad.mem[order(unique.dyad.mem)]
   N_dyad <- length(unique.dyad.mem)
-  dyad.by.obs <- data[, c(dyad_mem1, dyad_mem2)]
+  dyad.by.obs <- touse_data[, c(dyad_mem1, dyad_mem2)]
 
   progress_bar <- txtProgressBar(min = 1, max = N_dyad, style = 3, char = "=")
 
@@ -156,7 +136,7 @@ dcr_sandwich <- function(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofc
   close(progress_bar)
 
   # substract repeated variance estimator for repeated dyads
-  cov.mat.sum.intermed <- cov.mat.sum - sandwich::vcovCL(model, as.character(data[, dyad_id][[1]][-as.numeric(model$na.action)]), type = "HC0", multi0 = TRUE, cadjust = FALSE, fix = FALSE)
+  cov.mat.sum.intermed <- cov.mat.sum - sandwich::vcovCL(model, as.character(touse_data[, dyad_id][[1]][-as.numeric(model$na.action)]), type = "HC0", multi0 = TRUE, cadjust = FALSE, fix = FALSE)
 
   # substract HC variance estimator
   V.hat <- cov.mat.sum.intermed - (N_dyad - 2) * sandwich::vcovHC(model, type = "HC0")
