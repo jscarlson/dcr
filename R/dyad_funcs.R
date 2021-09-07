@@ -85,17 +85,14 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofcorr = FAL
 
   if (dofcorr == TRUE) {
     coef.vcov <- (N_dyad / (N_dyad - 1)) * V.hat
-    attr(coef.vcov, "names") <- NULL
   } else {
     coef.vcov <- V.hat
-    attr(coef.vcov, "names") <- NULL
   }
   coef.se <- sqrt(diag(coef.vcov))
 
   outputlst <- list(coef.se, coef.vcov, N_dyad)
   names(outputlst) <- c("dcrse", "dcrvcov", "N_udm")
   names(outputlst$dcrse) <- param.names
-  names(outputlst$dcrvcov) <- param.names
   return(outputlst)
 
 }
@@ -175,17 +172,14 @@ dcr_sandwich <- function(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofc
   # return standard errors
   if (dofcorr == TRUE) {
     coef.vcov <- (N_dyad / (N_dyad - 1)) * V.hat
-    attr(coef.vcov, "names") <- NULL
   } else {
     coef.vcov <- V.hat
-    attr(coef.vcov, "names") <- NULL
   }
   coef.se <- sqrt(diag(coef.vcov))
 
   outputlst <- list(coef.se, coef.vcov, N_dyad)
   names(outputlst) <- c("dcrse", "dcrvcov", "N_udm")
   names(outputlst$dcrse) <- param.names
-  names(outputlst$dcrvcov) <- param.names
   return(outputlst)
 
 }
