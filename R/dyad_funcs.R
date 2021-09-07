@@ -23,9 +23,9 @@
 #' @param data A `data.frame` object containing dyadic data.
 #' @param posdef A logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite.
 #' @param dofcorr A logical value indicating whether or not to apply a small sample correction to the final DCRSE estimates. This correction is equivalent to multiplying DCRSEs by sqrt(N/(N-1)), where N is the number of unique dyad members in the analytic sample. Correspondingly, when computing p-values, the test statistic should be compared to a t-distribution with DOF = N - 1.
-#' @return A list containing DCRSEs and DCR variances for model parameters, as well as the number of unique dyad members in the analytic sample.
+#' @return A list containing DCRSEs and the DCR variance-covariance matrix for model parameters, as well as the number of unique dyad members in the analytic sample.
 #' @export
-dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE) {
+dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofcorr = FALSE) {
 
   create_dyadid <- function(data, name, dyad_mem1, dyad_mem2, directed = F) {
     dyadframe <- data[,c(dyad_mem1, dyad_mem2)]
@@ -85,8 +85,10 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE
 
   if (dofcorr == TRUE) {
     coef.vcov <- (N_dyad / (N_dyad - 1)) * V.hat
+    attr(coef.vcov, "names") <- NULL
   } else {
     coef.vcov <- V.hat
+    attr(coef.vcov, "names") <- NULL
   }
   coef.se <- sqrt(diag(coef.vcov))
 
@@ -111,9 +113,9 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE
 #' @param data A `data.frame` object containing dyadic data.
 #' @param posdef A logical value indicating whether or not DCR variance-covariance matrix is forced to be positive semi-definite.
 #' @param dofcorr A logical value indicating whether or not to apply a small sample correction to the final DCRSE estimates. This correction is equivalent to multiplying DCRSEs by sqrt(N/(N-1)), where N is the number of unique dyad members in the analytic sample. Correspondingly, when computing p-values, the test statistic should be compared to a t-distribution with DOF = N - 1.
-#' @return A list containing DCRSEs and DCR variances for model parameters, as well as the number of unique dyad members in the analytic sample.
+#' @return A list containing DCRSEs and the DCR variance-covariance matrix for model parameters, as well as the number of unique dyad members in the analytic sample.
 #' @export
-dcr_sandwich <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE) {
+dcr_sandwich <- function(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofcorr = FALSE) {
 
   create_dyadid <- function(data, name, dyad_mem1, dyad_mem2, directed = F) {
     dyadframe <- data[,c(dyad_mem1, dyad_mem2)]
@@ -173,8 +175,10 @@ dcr_sandwich <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofco
   # return standard errors
   if (dofcorr == TRUE) {
     coef.vcov <- (N_dyad / (N_dyad - 1)) * V.hat
+    attr(coef.vcov, "names") <- NULL
   } else {
     coef.vcov <- V.hat
+    attr(coef.vcov, "names") <- NULL
   }
   coef.se <- sqrt(diag(coef.vcov))
 

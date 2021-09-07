@@ -4,7 +4,7 @@
 \alias{dcr}
 \title{Compute dyadic clustering robust (DCR) variance estimates}
 \usage{
-dcr(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE)
+dcr(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofcorr = FALSE)
 }
 \arguments{
 \item{model}{A model object.}
@@ -20,7 +20,7 @@ dcr(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE)
 \item{dofcorr}{A logical value indicating whether or not to apply a small sample correction to the final DCRSE estimates. This correction is equivalent to multiplying DCRSEs by sqrt(N/(N-1)), where N is the number of unique dyad members in the analytic sample. Correspondingly, when computing p-values, the test statistic should be compared to a t-distribution with DOF = N - 1.}
 }
 \value{
-A list containing DCRSEs and DCR variances for model parameters, as well as the number of unique dyad members in the analytic sample.
+A list containing DCRSEs and the DCR variance-covariance matrix for model parameters, as well as the number of unique dyad members in the analytic sample.
 }
 \description{
 This function computes DCR variance estimates and standard errors
