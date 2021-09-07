@@ -122,12 +122,18 @@ dcr_sandwich <- function(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofc
   print("Multiway decomposition computation in progress!")
   for(i in 1:N_dyad) {
     dyad.mem.i <- unique.dyad.mem[i] # set member i
-    dyad.with.i <- apply(dyad.by.obs, 1, function(x) as.numeric(dyad.mem.i %in% x)) # identify all dyads with member i
-    dyad.category <- dyad.with.i*gp.tag + (1-dyad.with.i)*1:nrow(dyad.by.obs) # give unique group tag to dyads containing i
+    dyad.with.i <- apply(dyad.by.obs, 1, function(x) as.numeric(dyad.mem.i %in% x))
+    dyad.category <- dyad.with.i*gp.tag + (1-dyad.with.i)*1:nrow(dyad.by.obs)
     if (i==1) {
-      cov.mat.sum <- sandwich::vcovCL(model, as.character(dyad.category[-as.numeric(model$na.action)]), type = "HC0", multi0 = TRUE, cadjust = FALSE, fix = FALSE)
+      cov.mat.sum <- sandwich::vcovCL(
+        model,
+        dyad.category[touse_obs],
+        type = "HC0", multi0 = TRUE, cadjust = FALSE, fix = FALSE)
     } else if (i!=1) {
-      cov.mat.sum <- cov.mat.sum + sandwich::vcovCL(model, as.character(dyad.category[-as.numeric(model$na.action)]), type = "HC0", multi0 = TRUE, cadjust = FALSE, fix = FALSE)
+      cov.mat.sum <- cov.mat.sum + sandwich::vcovCL(
+        model,
+        dyad.category[touse_obs],
+        type = "HC0", multi0 = TRUE, cadjust = FALSE, fix = FALSE)
     }
     setTxtProgressBar(progress_bar, value = i)
   }
@@ -136,7 +142,10 @@ dcr_sandwich <- function(model, dyad_mem1, dyad_mem2, data, posdef = FALSE, dofc
   close(progress_bar)
 
   # substract repeated variance estimator for repeated dyads
-  cov.mat.sum.intermed <- cov.mat.sum - sandwich::vcovCL(model, as.character(data[, dyad_id][[1]][-as.numeric(model$na.action)]), type = "HC0", multi0 = TRUE, cadjust = FALSE, fix = FALSE)
+  cov.mat.sum.intermed <- cov.mat.sum - sandwich::vcovCL(
+    model,
+    data[["_dcr_dyad_id"]][touse_obs],
+    type = "HC0", multi0 = TRUE, cadjust = FALSE, fix = FALSE)
 
   # substract HC variance estimator
   V.hat <- cov.mat.sum.intermed - (N_dyad - 2) * sandwich::vcovHC(model, type = "HC0")
