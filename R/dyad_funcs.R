@@ -84,16 +84,16 @@ dcr <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofcorr = TRUE
   }
 
   if (dofcorr == TRUE) {
-    coef.var <- (N_dyad / (N_dyad - 1)) * diag(V.hat)
+    coef.vcov <- (N_dyad / (N_dyad - 1)) * V.hat
   } else {
-    coef.var <- diag(V.hat)
+    coef.vcov <- V.hat
   }
-  coef.se <- sqrt(coef.var)
+  coef.se <- sqrt(diag(coef.vcov))
 
-  outputlst <- list(coef.se, coef.var, N_dyad)
-  names(outputlst) <- c("dcrse", "dcrvar", "N_udm")
+  outputlst <- list(coef.se, coef.vcov, N_dyad)
+  names(outputlst) <- c("dcrse", "dcrvcov", "N_udm")
   names(outputlst$dcrse) <- param.names
-  names(outputlst$dcrvar) <- param.names
+  names(outputlst$dcrvcov) <- param.names
   return(outputlst)
 
 }
@@ -172,16 +172,16 @@ dcr_sandwich <- function(model, dyad_mem1, dyad_mem2, data, posdef = TRUE, dofco
 
   # return standard errors
   if (dofcorr == TRUE) {
-    coef.var <- (N_dyad / (N_dyad - 1)) * diag(V.hat)
+    coef.vcov <- (N_dyad / (N_dyad - 1)) * V.hat
   } else {
-    coef.var <- diag(V.hat)
+    coef.vcov <- V.hat
   }
-  coef.se <- sqrt(coef.var)
+  coef.se <- sqrt(diag(coef.vcov))
 
-  outputlst <- list(coef.se, coef.var, N_dyad)
-  names(outputlst) <- c("dcrse", "dcrvar", "N_udm")
+  outputlst <- list(coef.se, coef.vcov, N_dyad)
+  names(outputlst) <- c("dcrse", "dcrvcov", "N_udm")
   names(outputlst$dcrse) <- param.names
-  names(outputlst$dcrvar) <- param.names
+  names(outputlst$dcrvcov) <- param.names
   return(outputlst)
 
 }
